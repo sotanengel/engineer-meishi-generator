@@ -1,7 +1,7 @@
 #card {
   width: 91mm;
   height: 55mm;
-  padding: 10px;
+  padding: 0.35cm 0.345cm; /* 縦: 0.35cm、横: 0.345cm の余白 */
   border: 1px solid #333;
   display: flex;
   align-items: center;
