@@ -4,21 +4,20 @@ function generateCard() {
   const github = document.getElementById("github").value;
   const qiita = document.getElementById("qiita").value;
   const x = document.getElementById("x").value;
+  const title = document.getElementById("title").value; // 追加
+  const interests = document.getElementById("interests").value; // 追加
 
-  // GitHubのプロフィール画像を取得
   // GitHubのプロフィール画像を取得
   const githubUsername = github.split('/').pop();
   const profileImgUrl = `https://avatars.githubusercontent.com/${githubUsername}`;
-  document.getElementById("profile-img").src = profileImgUrl; // 正しいURLを設定
-  console.log("Profile Image URL:", profileImgUrl); // 追加
+  document.getElementById("profile-img").src = profileImgUrl;
   document.getElementById("display-name").innerText = name;
+  document.getElementById("display-title").innerText = title; // 追加
+  document.getElementById("display-interests").innerText = interests; // 追加
   document.getElementById("display-email").innerText = email;
   document.getElementById("display-github").innerText = github;
-  document.getElementById("display-github").href = github;
   document.getElementById("display-qiita").innerText = qiita;
-  document.getElementById("display-qiita").href = qiita;
   document.getElementById("display-x").innerText = x;
-  document.getElementById("display-x").href = x;
 
   document.getElementById("card").style.display = "flex";
 
@@ -29,6 +28,8 @@ function generateCard() {
   if (github) params.append('github', github);
   if (qiita) params.append('qiita', qiita);
   if (x) params.append('x', x);
+  if (title) params.append('title', title); // 追加
+  if (interests) params.append('interests', interests); // 追加
 
   // 現在のURLにパラメータを追加
   const currentUrl = window.location.origin + window.location.pathname;
@@ -114,7 +115,14 @@ function populateFormFromURL() {
   if (params.has('x')) {
       document.getElementById('x').value = params.get('x');
   }
+  if (params.has('title')) { // 追加
+      document.getElementById('title').value = params.get('title');
+  }
+  if (params.has('interests')) { // 追加
+      document.getElementById('interests').value = params.get('interests');
+  }
 }
+
 
 // DOMが完全に読み込まれたら関数を実行
 document.addEventListener('DOMContentLoaded', populateFormFromURL);

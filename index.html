@@ -8,7 +8,9 @@
 </head>
 <body>
     <div class="input-container">
+        <input type="text" id="title" placeholder="肩書">
         <input type="text" id="name" placeholder="名前">
+        <input type="text" id="interests" placeholder="興味のあること（自由記入）">
         <input type="email" id="email" placeholder="メールアドレス">
         <input type="url" id="github" placeholder="GitHubのプロフィールURL">
         <input type="url" id="qiita" placeholder="QiitaのURL">
@@ -20,7 +22,11 @@
     <div id="card" style="display: none;">
         <div id="left">
             <img id="profile-img" src="" alt="GitHub Profile Image">
-            <div id="display-name"></div>
+            <div class="name-container">
+              <div id="display-title"></div>
+              <div id="display-name"></div>
+            </div>
+            <div id="display-interests"></div>
         </div>
         <div id="right">
             <div class="info"><img src="img/email-icon.png" alt="Email Icon"><span id="display-email"></span></div>
