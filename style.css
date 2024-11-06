@@ -27,7 +27,7 @@
 }
 
 #display-title {
-  font-size: 12px;
+  font-size: 8px;
   font-weight: bold;
   color: #666;
   margin: 0;
@@ -46,7 +46,7 @@
 }
 
 #display-interests {
-  font-size: 12px;
+  font-size: 8px;
   color: #333;
   white-space: normal;
   word-wrap: break-word;
@@ -89,7 +89,7 @@
 #card2 {
   width: 91mm;
   height: 55mm;
-  padding: 0.35cm 0.345cm;
+  padding: 0.35cm 0.345cm; /* 縦: 0.35cm、横: 0.345cm の余白 */
   border: 1px solid #333;
   display: flex;
   align-items: center;
@@ -97,7 +97,6 @@
   background-color: #fff;
   box-sizing: border-box;
   overflow: hidden;
-  margin-top: 10px; /* 元のカードの下に表示するための余白 */
 }
 
 #left-card2 {

@@ -100,70 +100,63 @@ async function fetchRepositories(githubUsername) {
   }
 }
 
-function downloadPDF() {
-  const card = document.getElementById("card");
+async function downloadPDF() {
+  const cardIds = ["card", "card2"];
   const opt = {
     margin: 0,
-    filename: "business_card.pdf",
+    filename: "meishi_mae.pdf",
     image: { type: "jpeg", quality: 1 },
-    html2canvas: {
-      scale: 2,
-      useCORS: true,
-    },
-    jsPDF: { unit: "cm", format: [9.1, 5.5], orientation: "landscape" },
+    html2canvas: { scale: 4, useCORS: true },
+    jsPDF: { unit: "mm", format: [91, 55], orientation: "landscape" },
   };
 
-  const images = Array.from(card.getElementsByTagName("img"));
-  const imagePromises = images.map((img) => {
-    return new Promise((resolve) => {
-      if (img.complete) {
-        resolve();
-      } else {
-        img.onload = resolve;
-        img.onerror = () => {
-          console.error(`Image failed to load: ${img.src}`);
+  for (const cardId of cardIds) {
+    const card = document.getElementById(cardId);
+    const images = Array.from(card.getElementsByTagName("img"));
+
+    const imagePromises = images.map((img) => {
+      return new Promise((resolve) => {
+        if (img.complete) {
           resolve();
-        };
-      }
+        } else {
+          img.onload = resolve;
+          img.onerror = () => {
+            console.error(`Image failed to load: ${img.src}`);
+            resolve();
+          };
+        }
+      });
     });
-  });
 
-  Promise.all(imagePromises)
-    .then(() => {
-      html2pdf()
-        .from(card)
-        .set(opt)
-        .output("blob")
-        .then(async (pdfBlob) => {
-          try {
-            // `pdf-lib`で1ページ目のみ抽出
-            const pdfDoc = await PDFLib.PDFDocument.load(
-              await pdfBlob.arrayBuffer()
-            );
-            const newPdfDoc = await PDFLib.PDFDocument.create();
-            const [firstPage] = await newPdfDoc.copyPages(pdfDoc, [0]); // 1ページ目のみコピー
-            newPdfDoc.addPage(firstPage);
+    try {
+      // 画像の読み込みが終わるまで待機
+      await Promise.all(imagePromises);
 
-            // 新しいPDFをバイナリデータとして保存
-            const pdfBytes = await newPdfDoc.save();
-            const finalBlob = new Blob([pdfBytes], { type: "application/pdf" });
+      // html2pdfでカードの内容をPDFのblob形式で生成
+      const pdfBlob = await html2pdf().from(card).set(opt).output("blob");
 
-            // ダウンロードリンクを作成してダウンロード
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(finalBlob);
-            link.download = "business_card_single_page.pdf";
-            link.click();
+      // pdf-libで1ページ目のみを取得
+      const pdfDoc = await PDFLib.PDFDocument.load(await pdfBlob.arrayBuffer());
+      const newPdfDoc = await PDFLib.PDFDocument.create();
+      const [firstPage] = await newPdfDoc.copyPages(pdfDoc, [0]);
+      newPdfDoc.addPage(firstPage);
 
-            // メモリを解放
-            URL.revokeObjectURL(link.href);
-          } catch (error) {
-            console.error("PDF生成中にエラーが発生しました:", error);
-          }
-        });
-    })
-    .catch((error) => {
-      console.error("画像の読み込みに失敗しました:", error);
-    });
+      // 新しいPDFをバイナリデータとして保存
+      const pdfBytes = await newPdfDoc.save();
+      const finalBlob = new Blob([pdfBytes], { type: "application/pdf" });
+
+      // ダウンロードリンクを作成してダウンロード
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(finalBlob);
+      link.download = `${cardId}_single_page.pdf`;
+      link.click();
+
+      // メモリを解放
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error(`PDF生成中にエラーが発生しました (${cardId}):`, error);
+    }
+  }
 }
 
 // URLパラメータを取得し、フォームに反映する関数
