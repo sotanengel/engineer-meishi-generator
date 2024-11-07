@@ -18,6 +18,9 @@
         color: #333;
       }
       header {
+        display: flex;
+        justify-content: space-between; /* 左右にスペースを作る */
+        align-items: center; /* 垂直方向に中央揃え */
         width: 100%;
         background-color: #9292ff;
         padding: 10px 20px;
@@ -25,15 +28,22 @@
         position: fixed;
         top: 0;
         left: 0;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
         z-index: 10;
       }
+
+      header h1 {
+        flex-grow: 1; /* h1を中央に配置するために余白を占有させる */
+        color: white;
+        text-align: center;
+        font-size: 18px;
+        margin: 0;
+      }
+
       header a {
         color: white;
         text-decoration: none;
         font-size: 1em;
+        margin-left: auto; /* aタグを右端に配置 */
       }
       #profile-img {
         width: 100px;
@@ -96,10 +106,11 @@
   <body>
     <!-- ヘッダー -->
     <header>
+      <h1>Enjoy Rustacean !!</h1>
       <a
         href="https://github.com/sotanengel/engineer-meishi-generator"
         target="_blank"
-        >ソースコード</a
+        >Code</a
       >
     </header>
 

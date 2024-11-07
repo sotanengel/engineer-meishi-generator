@@ -24,14 +24,7 @@ function generateCard() {
   document.getElementById("card").style.display = "flex";
 
   // Fetch and display Rust repositories in the output div, then update the URL with the top repositories
-  fetchRepositories(
-    githubUsername,
-    name,
-    githubUsername,
-    email,
-    qiita_user_name,
-    x_user_name
-  );
+  fetchRepositories(githubUsername, name, email, qiita_user_name, x_user_name);
 }
 
 async function fetchRepositories(githubUsername, name, email, qiita, x) {
