@@ -6,6 +6,8 @@ function generateCard() {
   const x = document.getElementById("x").value;
   const title = document.getElementById("title").value;
   const interests = document.getElementById("interests").value;
+  const qiita_user_name = qiita.split("/").pop();
+  const x_user_name = x.split("/").pop();
 
   const githubUsername = github.split("/").pop();
   const profileImgUrl = `https://avatars.githubusercontent.com/${githubUsername}`;
@@ -21,27 +23,18 @@ function generateCard() {
 
   document.getElementById("card").style.display = "flex";
 
-  const params = new URLSearchParams();
-  if (name) params.append("name", name);
-  if (email) params.append("email", email);
-  if (github) params.append("github", github);
-  if (qiita) params.append("qiita", qiita);
-  if (x) params.append("x", x);
-  if (title) params.append("title", title);
-  if (interests) params.append("interests", interests);
-
-  const currentUrl = window.location.origin + window.location.pathname;
-  const newUrl = `${currentUrl}?${params.toString()}`;
-  window.history.pushState({ path: newUrl }, "", newUrl);
-
-  // Fetch and display Rust repositories in the output div
-  fetchRepositories(githubUsername);
-
-  // 新しいカードを表示
-  document.getElementById("card2").style.display = "flex";
+  // Fetch and display Rust repositories in the output div, then update the URL with the top repositories
+  fetchRepositories(
+    githubUsername,
+    name,
+    githubUsername,
+    email,
+    qiita_user_name,
+    x_user_name
+  );
 }
 
-async function fetchRepositories(githubUsername) {
+async function fetchRepositories(githubUsername, name, email, qiita, x) {
   const apiUrl = `https://api.github.com/users/${githubUsername}/repos?sort=stars`;
 
   try {
@@ -73,12 +66,29 @@ async function fetchRepositories(githubUsername) {
       }
     }
 
+    // Sort repositories by star count and select the top 3
     rustRepos.sort((a, b) => b.stars - a.stars);
+    const topRepos = rustRepos.slice(0, 3).map((repo) => repo.name);
 
-    // スター数の合計を計算
+    // Construct new URL with name and top 3 repositories
+    const params = new URLSearchParams();
+    params.append("name", name);
+    params.append("github", githubUsername);
+    params.append("email", email);
+    params.append("qiita", qiita);
+    params.append("x", x);
+
+    topRepos.forEach((repo, index) => params.append(`repo${index + 1}`, repo));
+
+    const baseUrl =
+      "https://sotanengel.github.io/engineer-meishi-generator/digital_meishi/20241107_for_rust_tokyo.html";
+    const newUrl = `${baseUrl}?${params.toString()}`;
+
+    // Generate QR code with new URL
+    generateQRCode(newUrl);
+
+    // カニ画像などもここで処理
     const totalStars = rustRepos.reduce((sum, repo) => sum + repo.stars, 0);
-
-    // 画像のファイル名を決定
     let crabImage;
     if (totalStars < 5) {
       crabImage = "img/kani/red.png";
@@ -89,15 +99,38 @@ async function fetchRepositories(githubUsername) {
     } else {
       crabImage = "img/kani/gold.png";
     }
-
-    // カニ画像の変更
     document.querySelector("#card2 .crab-img").src = crabImage;
 
-    // 必要に応じてカードを表示
     document.getElementById("card2").style.display = "flex";
   } catch (error) {
-    console.error("Failed to fetch repositories:", error);
+    crabImage = "img/kani/red.png";
+    document.querySelector("#card2 .crab-img").src = crabImage;
   }
+}
+
+function generateQRCode(url) {
+  // QRコード用のimg要素を取得
+  const qrCodeImage = document.getElementById("qrcode");
+
+  // img要素が存在する場合
+  if (qrCodeImage) {
+    // QRコードライブラリを使用してQRコードを生成
+    const qrCodeUrl = generateQRCodeFromUrl(url); // これは適切なQRコード生成関数に置き換えてください
+
+    // 生成したQRコードURLをimg要素のsrc属性にセット
+    qrCodeImage.src = qrCodeUrl;
+  } else {
+    console.error("QR code image element not found");
+  }
+}
+
+function generateQRCodeFromUrl(url) {
+  // QRコード生成のロジック（例：QRコードライブラリの使用）
+  // ここで実際にURLをQRコードに変換するコードを書く
+  // 仮の実装として、URLをそのまま使っているが、実際にはライブラリを使ってQRコードURLを生成する
+  return `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
+    url
+  )}&size=150x150`;
 }
 
 async function downloadPDF() {
