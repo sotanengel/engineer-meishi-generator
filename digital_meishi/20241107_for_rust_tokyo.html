@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>デジタル名刺 for Rust</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f4f8;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        text-align: center;
+        color: #333;
+      }
+      header {
+        width: 100%;
+        background-color: #9292ff;
+        padding: 10px 20px;
+        box-sizing: border-box;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        z-index: 10;
+      }
+      header a {
+        color: white;
+        text-decoration: none;
+        font-size: 1em;
+      }
+      #profile-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-top: 0px; /* ヘッダー分のスペースを減らして近づけた */
+      }
+      #username {
+        font-size: 1.5em;
+        margin-top: 10px;
+      }
+      #social-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 20px;
+      }
+      #social-links a {
+        margin: 10px;
+        width: 40px; /* アイコン画像のサイズ調整 */
+        height: 40px; /* アイコン画像のサイズ調整 */
+      }
+      #social-links img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* 画像が歪まないようにする */
+      }
+      #repo-links {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+      }
+      .repo-button {
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 1em;
+        color: white;
+        background-color: #0056b3;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        display: inline-block;
+        width: 200px;
+      }
+      footer {
+        width: 100%;
+        background-color: black;
+        color: white;
+        padding: 10px 20px;
+        box-sizing: border-box;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ヘッダー -->
+    <header>
+      <a
+        href="https://github.com/sotanengel/engineer-meishi-generator"
+        target="_blank"
+        >ソースコード</a
+      >
+    </header>
+
+    <div id="profile-container">
+      <img id="profile-img" alt="GitHubユーザーの画像" />
+      <div id="username"></div>
+    </div>
+
+    <!-- ソーシャルメディアリンク -->
+    <div id="social-links">
+      <a id="email-link" target="_blank"
+        ><img src="../img/email-icon.png" alt="Email"
+      /></a>
+      <a id="github-link" target="_blank"
+        ><img src="../img/github-icon.png" alt="GitHub"
+      /></a>
+      <a id="qiita-link" target="_blank"
+        ><img src="../img/qiita-icon.png" alt="Qiita"
+      /></a>
+      <a id="x-link" target="_blank"><img src="../img/x-icon.png" alt="X" /></a>
+    </div>
+
+    <div id="repo-links">
+      <details>
+        <summary>Rustを使ったリポジトリ</summary>
+        <!-- リポジトリリンクのボタン -->
+      </details>
+    </div>
+
+    <!-- フッター -->
+    <footer>
+      <p>
+        Created by
+        <a href="https://github.com/sotanengel" target="_blank">sotanengel</a>
+      </p>
+    </footer>
+
+    <script>
+      // URLパラメータの取得
+      const params = new URLSearchParams(window.location.search);
+      const githubUsername = params.get("github");
+      const name = params.get("name");
+      const repo1 = params.get("repo1");
+      const repo2 = params.get("repo2");
+      const repo3 = params.get("repo3");
+      const email = params.get("email");
+      const qiita = params.get("qiita");
+      const x = params.get("x");
+
+      // GitHubユーザーの画像表示
+      const profileImg = document.getElementById("profile-img");
+      profileImg.src = `https://avatars.githubusercontent.com/${githubUsername}`;
+
+      // ユーザー名表示
+      const username = document.getElementById("username");
+      username.textContent = name;
+
+      // ソーシャルメディアリンクの設定
+      const emailLink = document.getElementById("email-link");
+      if (email) {
+        emailLink.href = `mailto:${email}`;
+      }
+
+      const githubLink = document.getElementById("github-link");
+      if (githubUsername) {
+        githubLink.href = `https://github.com/${githubUsername}`;
+      }
+
+      const qiitaLink = document.getElementById("qiita-link");
+      if (qiita) {
+        qiitaLink.href = `https://qiita.com/${qiita}`;
+      }
+
+      const xLink = document.getElementById("x-link");
+      if (x) {
+        xLink.href = `https://x.com/${x}`;
+      }
+
+      // リポジトリリンクのボタン生成
+      const repoLinks = document.querySelector("details");
+      [repo1, repo2, repo3].forEach((repo) => {
+        if (repo) {
+          const repoButton = document.createElement("a");
+          repoButton.href = `https://github.com/${githubUsername}/${repo}`;
+          repoButton.textContent = repo;
+          repoButton.classList.add("repo-button");
+          repoButton.target = "_blank";
+          repoLinks.appendChild(repoButton);
+        }
+      });
+    </script>
+  </body>
+</html>
